@@ -1,44 +1,25 @@
 import discord
 import random
+import os
 from discord.ext import commands
 
 client = commands.Bot(command_prefix='$')
-@client.event
-async def on_ready():
-    print('Bot Ligado')
-
-@client.command(aliases=['Ping'])
-async def ping(ctx):
-    await ctx.send(f'Pong! {round(client.latency * 1000)} ms')
-
-@client.command(aliases = ['Pergunta', 'teste'])
-async def pergunta(ctx, *,perg):
-    respostas = [
-        'Sim.',
-        'Não.',
-        'Talvez.']
-    await ctx.send(f'Pergunta: {perg}\nResposta: {random.choice(respostas)}')
-
-@client.command(aliases=['Chance', 'Corno'])
-async def corno(ctx):
-    await ctx.send(f'Você tem chance de {random.randrange(100)}% de ser corno')
 
 @client.command()
-@commands.has_permissions(administrator=True)
-async def clear(ctx, amount=5):
-    await ctx.channel.purge(limit=amount+1)
-    await ctx.send(f'{amount} mensagens apagadas.')
+async def load(ctx, extension):
+    client.load_extension(f'cogs.{extension}')
 
 @client.command()
-@commands.has_permissions(administrator=True)
-async def kick(ctx, member : discord.Member, *, reason=None):
-    await member.kick(reason = reason)
-    await ctx.send(f'{member} foi expulso do servidor.')
+async def unload(ctx, extension):
+    client.unload_extension(f'cogs.{extension}')
 
 @client.command()
-@commands.has_permissions(administrator=True)
-async def ban(ctx, member: discord.Member, *, reason=None):
-    await member.ban(reason = reason)
-    await ctx.send(f'{member} foi banido do servidor.')
+async def reload(ctx, extension):
+    client.unload_extension(f'cogs.{extension}')
+    client.load_extension(f'cogs.{extension}')
 
-client.run('ODg5OTA0OTA2NDUzMDAwMjc0.YUoChw.CH2L49hjl51gdi6nf_gClDLa5HU')
+for filename in os.listdir('./cogs'):
+    if filename.endswith('.py'):
+        client.load_extension(f'cogs.{filename[:-3]}')
+
+client.run('ODg5OTA0OTA2NDUzMDAwMjc0.YUoChw.KY7BtxdrY6UeqFDjHxVW-Aj_XA4')

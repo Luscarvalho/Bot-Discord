@@ -1,0 +1,52 @@
+import discord
+import random
+from random import randint
+from discord import member
+from discord.ext import commands
+
+class Misc(commands.Cog):
+    def __init__(self, client):
+        self.client = client
+
+    #comandos
+    @commands.command()
+    async def ping(self, ctx):
+        await ctx.send(f'Pong! {round(self.client.latency * 1000)} ms')
+
+    @commands.command(aliases = ['Pergunta', 'teste'])
+    async def pergunta(self, ctx, *,perg):
+        respostas = [
+            'Sim.',
+            'Não.',
+            'Talvez.']
+        await ctx.send(f'Pergunta: {perg}\nResposta: {random.choice(respostas)}')
+
+    @commands.command(aliases=['Chance', 'Corno'])
+    async def corno(self, ctx):
+        await ctx.send(f'Você tem chance de {random.randrange(100)}% de ser corno')
+
+    @commands.command()
+    async def kiss(self, ctx, member: discord.Member):
+        author = ctx.message.author.mention
+        mention = member.mention
+        kiss = "**{0} beijou {1}!**"
+
+        if not kiss: 
+            await ctx.send('lembre-se de mencionar um usuário válido para beijar!')
+        else:
+            chances = ['https://media.giphy.com/media/3uhDOBLjDX5yDNXr3x/giphy.gif',
+                'https://loritta.website/assets/img/actions/kiss/female_x_male/gif_378.gif',
+                'https://media.giphy.com/media/lnLTjmGU7qt0Ams20V/giphy.gif',
+                'https://i.imgur.com/4Ad9iwh.gif',
+                'https://pa1.narvii.com/6942/4e2885141812813b051d187a82b628c1dc4b0326r1-500-281_hq.gif',
+                'https://media.giphy.com/media/l4FsKa1n9fyStiwZW/giphy.gif',
+                'https://gifimage.net/wp-content/uploads/2018/10/anime-peck-gif-5.gif',
+                'https://loritta.website/assets/img/actions/kiss/female_x_female/gif_348.gif'
+            ]
+            image = random.choice(chances)
+            embed = discord.Embed(description=kiss.format(author, mention), colour=discord.Colour.blue())
+            embed.set_image(url=image)
+            await ctx.send(embed=embed)
+
+def setup(client):
+    client.add_cog(Misc(client))
